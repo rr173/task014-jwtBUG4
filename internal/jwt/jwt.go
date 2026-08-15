@@ -59,6 +59,11 @@ const (
 func (c Claims) MarshalJSON() ([]byte, error) {
 	m := make(map[string]any)
 	for k, v := range c.Extra {
+		// Skip standard claim keys in Extra to prevent injection.
+		switch k {
+		case keyIss, keySub, keyAud, keyJti, keyExp, keyNbf, keyIat:
+			continue
+		}
 		m[k] = v
 	}
 	if c.Issuer != "" {
